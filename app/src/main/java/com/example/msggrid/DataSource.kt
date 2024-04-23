@@ -14,6 +14,9 @@ object DataSource {
         users.add(user)
     }
 
+    fun editData(Index: Int, user: User){
+        //
+    }
     fun getUsers(): List<User> = users
 
     private var my: My = My(

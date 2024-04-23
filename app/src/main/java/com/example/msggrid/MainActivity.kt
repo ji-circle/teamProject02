@@ -2,6 +2,7 @@ package com.example.msggrid
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
@@ -62,12 +63,17 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
 
         //프로그램이 시작될 때 FirstFragment를 뿌리라고 코드 작성함
         setFragment(list())
+
+
     }
+
 
     private fun notification() {
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val builder: NotificationCompat.Builder
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 26 버전 이상
@@ -131,15 +137,22 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
         //이부분은 이미지 바꾸기... 예시임...
         val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_profile_default)
 
+
+        // PendingIntent를 설정하여 알림 클릭 시 실행될 액티비티를 지정합니다.
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
         //알림이 울렸을 때... 두 번째 액티비티 실행하는 코드
-        //val intent = Intent(this, SecondActivity::class.java)
-        //intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        //val pendingIntent = PendingIntent.getActivity(
-        //    this,
-        //    0,
-        //    intent,
-        //    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        //)
+//        val intent = Intent(this, SecondActivity::class.java)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        val pendingIntent = PendingIntent.getActivity(
+//            this,
+//            0,
+//            intent,
+//            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+//        )
+
+
         // 알림의 기본 정보... 빌더의 옵션들 ??
         builder.run {
             setSmallIcon(R.mipmap.ic_launcher)
@@ -153,6 +166,8 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
             )
             //라지아이콘에 사진 넣기
             setLargeIcon(bitmap)
+            setAutoCancel(true)
+            setContentIntent(pendingIntent)
             //위의 setStyle을 지우고... 이부분은 글 대신 사진을 크게 넣는 코드
 //            setStyle(NotificationCompat.BigPictureStyle()
 //                    .bigPicture(bitmap)
@@ -188,3 +203,38 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
         Toast.makeText(this, data, Toast.LENGTH_SHORT).show()
     }
 }
+
+
+//import android.app.NotificationManager
+//import android.content.BroadcastReceiver
+//import android.content.Context
+//import android.content.Intent
+//
+//class NotificationReceiver(private val memoryStorage: MemoryStorage) : BroadcastReceiver() {
+//
+//    override fun onReceive(context: Context, intent: Intent) {
+//        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//
+//        if (intent.action == "android.intent.action.NOTIFICATION_CLICKED") {
+//            // 알림을 클릭하여 앱이 활성화된 경우
+//        } else if (intent.action == "android.intent.action.NOTIFICATION_DELETED") {
+//            // 알림을 받았지만 확인하지 않은 경우
+//            updateData()
+//        }
+//
+//        // 알림을 삭제합니다.
+//        notificationManager.cancel(0)
+//    }
+//
+//    private fun updateData() {
+//        // MemoryStorage 객체에서 데이터를 가져와서 업데이트합니다.
+//        val userList = memoryStorage.getUserList()
+//        // 데이터를 업데이트하는 작업을 수행합니다.
+//        // 예를 들어, User 객체의 isChecked를 false로 변경한다고 가정합니다.
+//        for (user in userList) {
+//            user.isChecked = false
+//        }
+//        // 업데이트된 데이터를 MemoryStorage에 다시 저장합니다.
+//        memoryStorage.saveUserList(userList)
+//    }
+//}
